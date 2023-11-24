@@ -1,0 +1,130 @@
+@page "/biblioteca/registro"
+@inherits PageModel
+
+<h3>Registro de Biblioteca</h3>
+
+<form method="post" class="row g-3 needs-validation" novalidate>
+    <div class="col-md-4">
+        <label for="NombreEstudiante" class="col-form-label">Nombre del Estudiante</label>
+        <input type="text" class="form-control" id="NombreEstudiante" @bind="NuevoRegistro.NombreEstudiante" required maxlength="200" />
+        <div class="valid-feedback"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label for="Cuenta" class="col-form-label">Número de Cuenta</label>
+        <input type="number" class="form-control" id="Cuenta" @bind="NuevoRegistro.Cuenta" required />
+        <div class="valid-feedback"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label for="Correo" class="col-form-label">Correo Electrónico</label>
+        <input type="email" class="form-control" id="Correo" @bind="NuevoRegistro.Correo" required />
+        <div class="valid-feedback"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label for="LibroSeleccionado" class="col-form-label">Libro Seleccionado</label>
+        <select class="form-select" id="LibroSeleccionado" @bind="NuevoRegistro.LibroSeleccionado" required>
+            <option value="">Seleccionar Libro</option>
+            @foreach (var libro in LibrosDisponibles.Where(l => !registros.Any(r => r.LibroSeleccionado == l.Id)))
+            {
+                <option value="@libro.Id">@libro.Titulo</option>
+            }
+        </select>
+        <div class="valid-feedback"></div>
+    </div>
+
+    <div>
+        <button class="btn btn-primary" type="button" @onclick="Registrar">REGISTRAR</button>
+    </div>
+</form>
+<br>
+<br>
+<br>
+
+@if (EstudiantesRegistrados.Any())
+{
+    <h3>Tabla Estudiantes Registrados</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre del Estudiante</th>
+                <th>Número de Cuenta</th>
+                <th>Correo Electrónico</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var estudiante in EstudiantesRegistrados)
+            {
+                <tr>
+                    <td>@estudiante.NombreEstudiante</td>
+                    <td>@estudiante.NumeroCuenta</td>
+                    <td>@estudiante.CorreoElectronico</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (registros.Any())
+{
+    <h3>Tabla RegistrosBiblioteca</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre del Estudiante</th>
+                <th>Número de Cuenta</th>
+                <th>Correo Electrónico</th>
+                <th>Libro Seleccionado</th>
+                <th>Fecha de Registro</th>
+                <th>Fecha de Devolución</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var registro in registros)
+            {
+                <tr>
+                    <td>@registro.NombreEstudiante</td>
+                    <td>@registro.Cuenta</td>
+                    <td>@registro.Correo</td>
+                    <td>@registro.LibroSeleccionadoTitulo</td>
+                    <td>@registro.FechaRegistro.ToString("yyyy-MM-dd")</td>
+                    <td>@(registro.FechaDevolucion.HasValue ? registro.FechaDevolucion.Value.ToString("yyyy-MM-dd") : "No devuelto")</td>
+                    <td>
+                        @if (!registro.FechaDevolucion.HasValue)
+                        {
+                            <button class="btn btn-warning" @onclick="() => DevolverLibro(registro)">Devolver</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (LibrosDisponibles.Any())
+{
+    <h3>Tabla Libros Disponibles</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id Libro</th>
+                <th>Título del Libro</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var libro in LibrosDisponibles)
+            {
+                <tr>
+                    <td>@libro.Id</td>
+                    <td>@libro.Titulo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    // Resto de tu código existente
+}

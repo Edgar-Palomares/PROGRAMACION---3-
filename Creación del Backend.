@@ -1,0 +1,80 @@
+//MODELO BASE DE DATOS
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+public class RegistroBiblioteca
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string NombreEstudiante { get; set; }
+
+    [Required]
+    public string Cuenta { get; set; }
+
+    [Required]
+    [EmailAddress]
+    public string Correo { get; set; }
+
+    [Required]
+    public int LibroSeleccionado { get; set; }
+
+    [ForeignKey("LibroSeleccionado")]
+    public Libro Libro { get; set; }
+
+    public DateTime FechaRegistro { get; set; }
+
+    public DateTime? FechaDevolucion { get; set; }
+}
+
+public class Estudiante
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string NombreEstudiante { get; set; }
+
+    [Required]
+    public string NumeroCuenta { get; set; }
+
+    [Required]
+    [EmailAddress]
+    public string CorreoElectronico { get; set; }
+}
+
+public class Libro
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string Titulo { get; set; }
+}
+
+// Contexto a la base de datos
+using Microsoft.EntityFrameworkCore;
+
+public class BibliotecaDbContext : DbContext
+{
+    public DbSet<RegistroBiblioteca> Registros { get; set; }
+    public DbSet<Estudiante> Estudiantes { get; set; }
+    public DbSet<Libro> Libros { get; set; }
+
+    public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> options) : base(options)
+    {
+    }
+}
+
+//Cadena de conexion
+{
+  "ConnectionStrings": {
+    "BibliotecaDbConnection": "Server=(localdb)\\mssqllocaldb;Database=BibliotecaDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+
+//Migración y creación de la base de datos
+Add-Migration InitialCreate
+Update-Database
+
